@@ -1,0 +1,1271 @@
+\chapter{Finite Automata and Regular Languages}
+
+\section{Finite Automata}
+
+\begin{greybox}
+\begin{definition}[Deterministic Finite Automaton]
+A \emph{deterministic finite automaton} (DFA) is a $5$-tuple $(Q, \Sigma, \delta, q_0, F)$, where
+\begin{enumerate}
+    \item $Q$ is a finite set called \emph{states},
+    \item $\Sigma$ is a finite set called the \emph{alphabet},
+    \item $\delta : Q \times \Sigma \to Q$ is a \emph{transition function},
+    \item $q_0 \in Q$ is the \emph{start state}, and
+    \item $F \subseteq Q$ is the \emph{set of accept states}.
+\end{enumerate}
+\end{definition}
+\end{greybox}
+
+\begin{example}
+Look at the state diagram of the following finite automaton $M_1$.
+
+\begin{center}
+\begin{tikzpicture}[>=stealth, node distance=3cm, thick]
+    \node[state, initial] (q0) {$q_0$};
+    \node[state, accepting, right of=q0] (q1) {$q_1$};
+    \node[state, right of=q1] (q2) {$q_2$};
+
+    \draw (q0) edge[loop above] node{0} (q0)
+          (q0) edge[above] node{1} (q1)
+          (q1) edge[loop above] node{1} (q1)
+          (q1) edge[bend left, above] node{0} (q2)
+          (q2) edge[bend left, below] node{0} (q1)
+          (q2) edge[loop above] node{1} (q2);
+\end{tikzpicture}
+\end{center}
+
+Now a finite automaton takes a binary string, such as $1101$, as input and gives out the output if the input is \underline{accept} or \underline{reject}.
+
+\medskip
+\noindent\textbf{Q.} How to quantify this accept/reject?
+
+Reading through the string from left to right, taking in each binary digit, the FA changes its state. If the last state is an accept state, such as $q_1$, then the output is accept, otherwise reject.
+
+\bigskip
+\noindent For this example, on input $1101$:
+
+\begin{center}
+\begin{tabular}{c c}
+digit & state transition \\ \hline
+$1$ & $q_0 \to q_1$ \\
+$1$ & $q_1 \to q_1$ \\
+$0$ & $q_1 \to q_2$ \\
+$1$ & $q_2 \to q_1$
+\end{tabular}
+\end{center}
+
+\noindent $\therefore\ 1101$ is accepted.
+\end{example}
+
+\bigskip
+\noindent For this example,
+\begin{enumerate}[(i)]
+    \item $Q = \{q_0, q_1, q_2\}$
+    \item $\Sigma = \{0, 1\}$
+    \item $\delta : Q \times \Sigma \to Q$ with the following table
+\end{enumerate}
+
+\begin{center}
+\begin{tabular}{c|c|c}
+$\delta$ & $0$ & $1$ \\ \hline
+$q_0$ & $q_0$ & $q_1$ \\
+$q_1$ & $q_2$ & $q_1$ \\
+$q_2$ & $q_1$ & $q_2$
+\end{tabular}
+\end{center}
+
+\begin{enumerate}[(iv)]
+    \item $q_0$ is the start state.
+    \item $F = \{q_1\}$.
+\end{enumerate}
+
+\section{Languages}
+
+The set of all strings $A$ that $M$ accepts is called the \emph{language of machine $M$}, denoted as $L(M)$. We say $M$ \emph{recognizes} $A = L(M)$.
+
+A machine may accept many strings, but it only accepts one language. We also have the empty language ($\emptyset$) for machines accepting no strings.
+
+\begin{example}
+For $M_1$ as before, we have
+\[
+L(M_1) = \{ w \in \{0,1\}^* \mid w \text{ has at least one } 1 \text{ and an even number of } 0\text{'s follow the last } 1 \}.
+\]
+\end{example}
+
+\begin{example}
+Here is an example of the state diagram of a finite automaton $M_2, M_3, M_4$.
+
+\medskip
+\noindent\underline{$M_2$:}
+\begin{center}
+\begin{tikzpicture}[>=stealth, node distance=3cm, thick]
+    \node[state, initial] (q0) {$q_0$};
+    \node[state, accepting, right of=q0] (q1) {$q_1$};
+
+    \draw (q0) edge[loop above] node{0} (q0)
+          (q0) edge[bend left, above] node{1} (q1)
+          (q1) edge[loop above] node{1} (q1)
+          (q1) edge[bend left, below] node{0} (q0);
+\end{tikzpicture}
+\end{center}
+
+\noindent Formally, $M_2 = (\{q_0, q_1\}, \{0,1\}, \delta, q_0, \{q_1\})$.
+
+\bigskip
+\noindent For this example, $\delta$ is given by:
+\begin{center}
+\begin{tabular}{c|c|c}
+$\delta$ & $0$ & $1$ \\ \hline
+$q_0$ & $q_0$ & $q_1$ \\
+$q_1$ & $q_0$ & $q_1$
+\end{tabular}
+\end{center}
+
+\noindent Now, language of $M_2$:
+\[
+L(M_2) = \{ w \mid w \text{ ends with } 1 \}.
+\]
+
+\bigskip
+\noindent\underline{$M_3$:}
+\begin{center}
+\begin{tikzpicture}[>=stealth, node distance=3cm, thick]
+    \node[state, initial, accepting] (q0) {$q_0$};
+    \node[state, right of=q0] (q1) {$q_1$};
+
+    \draw (q0) edge[loop above] node{0} (q0)
+          (q0) edge[bend left, above] node{1} (q1)
+          (q1) edge[loop above] node{1} (q1)
+          (q1) edge[bend left, below] node{0} (q0);
+\end{tikzpicture}
+\end{center}
+
+\[
+L(M_3) = \{ w \mid w \text{ ends with } 0 \text{ or } w = \varepsilon \}.
+\]
+
+\bigskip
+\noindent\underline{$M_4$:}
+\begin{center}
+\begin{tikzpicture}[>=stealth, node distance=2.6cm, thick]
+    \node[state] (s) {$S$};
+    \node[state, accepting, below left of=s] (q1) {$q_1$};
+    \node[state, accepting, below right of=s] (r1) {$r_1$};
+    \node[state, below of=q1] (q2) {$q_2$};
+    \node[state, below of=r1] (r2) {$r_2$};
+
+    \draw (s) edge[left] node{$a$} (q1)
+          (s) edge[right] node{$b$} (r1)
+          (q1) edge[loop left] node{$a$} (q1)
+          (r1) edge[loop right] node{$b$} (r1)
+          (q1) edge[bend left, left] node{$b$} (q2)
+          (q2) edge[bend left, right] node{$a$} (q1)
+          (q2) edge[loop left] node{$b$} (q2)
+          (r1) edge[bend left, right] node{$a$} (r2)
+          (r2) edge[bend left, left] node{$b$} (r1)
+          (r2) edge[loop right] node{$a$} (r2);
+\end{tikzpicture}
+\end{center}
+
+\[
+Q = \{S, q_1, q_2, r_1, r_2\}, \qquad \Sigma = \{a, b\}, \qquad F = \{q_1, r_1\}, \qquad \text{start-state} = S.
+\]
+
+\noindent $L(M_4) = ?$
+
+\medskip
+It is easy to see that going from the left component to the right is not possible. And for the left (resp.\ right) component, the string must start with $a$ (resp.\ $b$), and for the string to be accepted, it must end with $a$ (resp.\ $b$). Also, we can change to $q_1$ (resp.\ $r_1$) iff the last string letter is $a$ (resp.\ $b$). So
+\[
+L(M_4) = \{ w \in \{a,b\}^* \mid w \text{ starts and ends with some (the same) letter} \}.
+\]
+\end{example}
+
+\begin{greybox}
+\begin{remark}
+\begin{enumerate}[(1)]
+    \item For a language, there may be different DFAs accepting it (in fact, there can be infinitely many). But each DFA accepts exactly one language.
+    \item Given a pair $(\overset{\text{state}}{q}, \overset{\text{symbol}}{a})$, $\exists! \ q' \in Q$ so that $\delta(q,a) = q'$.
+    \item The set of states in a DFA partitions the set of all strings. The set of states is finite.
+\end{enumerate}
+\end{remark}
+\end{greybox}
+
+\subsection{Computation of a DFA}
+
+Let $M = (Q, \Sigma, \delta, q_0, F)$ and $w = a_1 \cdots a_n$ where $a_i \in \Sigma$. We say that $M$ \emph{accepts} $w$ if $\exists$ a sequence of states $r_0, \dots, r_n$ s.t.
+\begin{enumerate}[1)]
+    \item $r_0 = q_0$
+    \item $r_i = \delta(r_{i-1}, a_i)\ \ \forall i = 1, \dots, n$
+    \item $r_n \in F$.
+\end{enumerate}
+
+\begin{greybox}
+\begin{remark}
+The states $\{r_i\}$ need not be distinct.
+\end{remark}
+\end{greybox}
+
+Let $L \subseteq \Sigma^*$ be a language. We say that $M$ \emph{accepts/recognizes} $L$ if
+\[
+L = \{ w \in \Sigma^* \mid M \text{ accepts } w \}.
+\]
+
+Let $L \subseteq \Sigma^*$ be a language. We say $L$ is \emph{regular} if $\exists$ a DFA $M$ s.t.
+\[
+L = L(M).
+\]
+
+\begin{example}
+$A = \{10, 001\}$
+\[
+A^* = \{ \varepsilon, 10, 001, 10001, 1010, 00110, \dots \}.
+\]
+\end{example}
+
+\section{Non-Determinism}
+
+\begin{itemize}
+    \item From a state $q$, on an input symbol $a$, the automaton can go to multiple states ($k$ different states, $k \geq 0$).
+    \item Computation happens simultaneously along each of these paths.
+    \item Has $\varepsilon$-transitions if there is an $\varepsilon$-transition
+    \begin{center}
+        \begin{tikzpicture}[>=stealth, node distance=3cm, thick]
+            \node[state] (qi) {$q_i$};
+            \node[state, right of=qi] (qj) {$q_j$};
+            \draw (qi) edge[above] node{$\varepsilon$} (qj);
+        \end{tikzpicture}
+    \end{center}
+    then the automaton moves to state $q_j$ from $q_i$ without reading the next input bit.
+    \item An input is accepted if there is some computation path that leads to an accept state.
+\end{itemize}
+
+\begin{example}
+\begin{center}
+\begin{tikzpicture}[>=stealth, node distance=3cm, thick]
+    \node[state, initial] (q0) {$q_0$};
+    \node[state, right of=q0] (q1) {$q_1$};
+    \node[state, right of=q1] (q2) {$q_2$};
+    \node[state, accepting, right of=q2] (q3) {$q_3$};
+
+    \draw (q0) edge[loop above] node{$0,1$} (q0)
+          (q0) edge[above] node{$1$} (q1)
+          (q1) edge[above] node{$0, \varepsilon$} (q2)
+          (q2) edge[above] node{$1$} (q3)
+          (q3) edge[loop above] node{$0,1$} (q3);
+\end{tikzpicture}
+\end{center}
+
+\begin{align*}
+(q_0, 1) &\to \{q_0, q_1\} \\
+(q_1, 1) &\to \{\} \\
+(q_1, 0) &\to \{q_2\} \\
+(q_1, \varepsilon) &\to \{q_2\}
+\end{align*}
+
+\noindent\textbf{Note:} The transitions are labelled with symbols from the set $\Sigma_\varepsilon = \Sigma \cup \{\varepsilon\}$.
+\end{example}
+
+\bigskip
+\begin{example}
+$L = \{0^n 1^n \mid n \geq 0\}$ is not regular.
+\end{example}
+
+\begin{example}
+$L = \{ w \mid w \text{ doesn't contain } 11 \text{ as a substring} \}$.
+
+\begin{center}
+\begin{tikzpicture}[>=stealth, node distance=3cm, thick]
+    \node[state, initial, accepting] (q0) {$q_0$};
+    \node[state, accepting, right of=q0] (q1) {$q_1$};
+    \node[state, right of=q1] (q2) {$q_2$};
+
+    \draw (q0) edge[loop above] node{0} (q0)
+          (q0) edge[bend left, above] node{1} (q1)
+          (q1) edge[bend left, below] node{0} (q0)
+          (q1) edge[above] node{1} (q2)
+          (q2) edge[loop above] node{$0,1$} (q2);
+    \node[below=0.2cm of q2] {(dump state)};
+\end{tikzpicture}
+\end{center}
+
+$q_2$ corresponds to the set of all strings that contain $11$ as a substring. $q_0$ corr.\ to the set of strings that don't end with a $1$. $q_1$ corr.\ to the set of all strings that don't contain $11$ and end with $1$.
+\[
+M = (\{q_0, q_1, q_2\}, \{0,1\}, \delta, q_0, \{q_0, q_1\}).
+\]
+
+\begin{greybox}
+\begin{remark}
+A \emph{dump state} is a state from where the automaton cannot reach an accept state.
+\end{remark}
+\end{greybox}
+\end{example}
+
+\begin{example}
+$L = \{ w \in \{0,1\}^* \mid |w| = 3 \}$.
+
+\begin{center}
+\begin{tikzpicture}[>=stealth, node distance=2.6cm, thick]
+    \node[state, initial] (q0) {$q_0$};
+    \node[state, right of=q0] (q1) {$q_1$};
+    \node[state, right of=q1] (q2) {$q_2$};
+    \node[state, accepting, right of=q2] (q3) {$q_3$};
+    \node[state, below of=q3] (q4) {$q_4$};
+
+    \draw (q0) edge[above] node{$0,1$} (q1)
+          (q1) edge[above] node{$0,1$} (q2)
+          (q2) edge[above] node{$0,1$} (q3)
+          (q3) edge[right] node{$0,1$} (q4)
+          (q4) edge[loop below] node{$0,1$} (q4);
+    \node[right=0.1cm of q4] {(dump state)};
+\end{tikzpicture}
+\end{center}
+\end{example}
+
+\subsection{Regular Operations}
+
+Let $A, B$ be two languages over $\Sigma$.
+\begin{enumerate}[1.]
+    \item \textbf{Union:} $A \cup B = \{x \mid x \in A \text{ or } x \in B\}$
+    \item \textbf{Concatenation:} $A \cdot B = \{xy \mid x \in A,\ y \in B\}$
+    \item \textbf{Star:} $A^* = \{x_1 \cdots x_k \mid k \geq 0,\ x_i \in A\ \forall i\}$
+\end{enumerate}
+
+\section{Nondeterministic Finite Automata}
+
+\begin{greybox}
+\begin{definition}[NFA]
+A \emph{nondeterministic finite automaton} (NFA) is the five-tuple $N = (Q, \Sigma, \delta, q_0, F)$ with $Q, \Sigma, q_0, F$ defined the same as for a DFA, but $\delta$ is different: instead of $\delta : Q \times \Sigma \to Q$, we have the transition function
+\[
+\delta : Q \times \Sigma_\varepsilon \to 2^Q, \qquad [\Sigma_\varepsilon = \Sigma \cup \{\varepsilon\}].
+\]
+\end{definition}
+\end{greybox}
+
+\begin{greybox}
+\begin{definition}
+We say that $N$ \emph{accepts} an input $w = a_1 \cdots a_n$ if we can write $w$ as $w = b_1 \cdots b_m$ where $b_i \in \Sigma_\varepsilon$ and $\exists$ a sequence of states $r_0, \dots, r_m$ (not necessarily distinct) such that
+\begin{enumerate}[i)]
+    \item $r_0 = q_0$ \hfill (initial condition)
+    \item $r_i \in \delta(r_{i-1}, b_i) \ \ \forall i = 1, \dots, m$ \hfill (transition condition)
+    \item $r_m \in F$. \hfill (accept condition)
+\end{enumerate}
+\end{definition}
+\end{greybox}
+
+We similarly define $L(N) := \{ w \in \Sigma^* \mid N \text{ accepts } w \}$.
+
+\begin{example}
+$L_3 = \{ w \in \{0,1\}^* \mid 3^{\text{rd}} \text{ last digit of } w \text{ is } 1 \}$.
+
+\begin{center}
+\begin{tikzpicture}[>=stealth, node distance=3cm, thick]
+    \node[state, initial] (q0) {$q_0$};
+    \node[state, right of=q0] (q1) {$q_1$};
+    \node[state, accepting, right of=q1] (q2) {$q_2$};
+
+    \draw (q0) edge[loop above] node{$0,1$} (q0)
+          (q0) edge[above] node{1} (q1)
+          (q1) edge[above] node{$0,1$} (q2);
+\end{tikzpicture}
+\end{center}
+
+This choice (whether to stay at $q_0$ or move to $q_1$) is made by (nondeterministically) guessing if the digit read is the $3^{\text{rd}}$ last digit of $w$.
+
+\bigskip
+Similarly we can define an NFA for
+\[
+L_k = \{ w \in \{0,1\}^* \mid k^{\text{th}} \text{ last digit of } w \text{ is } 1 \}.
+\]
+\end{example}
+
+\bigskip
+\noindent Consider an input $w = 010110$.
+
+\begin{center}
+\begin{tabular}{c|c}
+Set of states the automaton is in & Symbol read \\ \hline
+$\{q_0\}$ & $0$ \\
+$\{q_0\}$ & $1$ \\
+$\{q_0, q_1, q_2\}$ & $0$ \\
+$\{q_0, q_2\}$ & $1$ \\
+$\{q_0, q_1, q_2, q_3\}$ & $1$ \\
+$\{q_0, q_1, q_2, q_3\}$ & $0$ \\
+$\{q_0, q_2, q_3\}$ & Input accepted
+\end{tabular}
+\end{center}
+
+\subsection{Difference between DFA and NFA}
+
+\begin{center}
+\begin{tabular}{p{6.5cm} p{6.5cm}}
+\textbf{DFA} & \textbf{NFA} \\ \hline
+$(q,a) \to$ single state & $(q,a) \to$ multiple states \\
+single computation & multiple computation \\
+no $\varepsilon$-transitions & have $\varepsilon$-transitions \\
+accept if the computation ends at an accept state & accept if one of the computation paths ends at an accept state
+\end{tabular}
+\end{center}
+
+\section{Equivalence of NFA and DFA}
+
+Every DFA is also an NFA.
+
+\begin{blackbox}
+\begin{theorem}
+Let $N = (Q, \Sigma, \delta, q_0, F)$ be an NFA. There exists a DFA $D = (Q', \Sigma, \delta', q_0', F')$ such that $L(N) = L(D)$.
+\end{theorem}
+\end{blackbox}
+
+\begin{proof}[Proof (construction of $D$)]
+\begin{itemize}
+    \item $Q' = 2^Q$.
+    \item Let $A \subseteq Q$, then $\delta'(A, a) = \bigcup_{r \in A} \delta(r, a)$.
+    \item $q_0' = \{q_0\}$.
+    \item $F' = \{ A \subseteq Q \mid A \cap F \neq \emptyset \}$.
+\end{itemize}
+
+\noindent What about $\varepsilon$-transitions?
+
+Let $R \subseteq Q$. Define the $\varepsilon$-\emph{closure} of $R$ as $E(R)$:
+\[
+E(R) = \bigcup_{r \in R} \{ t \mid t \text{ is reachable from } r \text{ using } 0 \text{ or more } \varepsilon\text{-transitions} \}.
+\]
+
+We define $\delta'$ to accommodate $\varepsilon$-transitions:
+\[
+\delta'(A, a) = \bigcup_{r \in A} E(\delta(r, a)).
+\]
+
+\noindent (Proof continued — refer to Hopcroft / Sipser / Kozen.)
+\end{proof}
+
+\begin{example}
+$L_2 = \{ w \in \{0,1\}^* \mid |w| \text{ is div.\ by } 2 \text{ or } 5 \}$.
+\end{example}
+
+\noindent\textit{Solution.}
+\begin{center}
+\begin{tikzpicture}[>=stealth, node distance=2.2cm, thick]
+    \node[state] (q0) {$q_0$};
+    \node[state, accepting, above right of=q0] (q1) {$q_1'$};
+    \node[state, right of=q1] (q2) {$q_2'$};
+    \node[state, accepting, below right of=q0] (r1) {$q_1''$};
+    \node[state, right of=r1] (r2) {$q_2''$};
+    \node[state, right of=r2] (r3) {$q_3''$};
+    \node[state, right of=r3] (r4) {$q_4''$};
+    \node[state, below of=r3] (r5) {$q_5''$};
+
+    \draw (q0) edge[above] node{$\varepsilon$} (q1)
+          (q1) edge[bend left, above] node{0} (q2)
+          (q2) edge[bend left, below] node{0} (q1)
+          (q0) edge[below] node{$\varepsilon$} (r1)
+          (r1) edge[above] node{0} (r2)
+          (r2) edge[above] node{0} (r3)
+          (r3) edge[above] node{0} (r4)
+          (r4) edge[bend right, right] node{0} (r5)
+          (r5) edge[bend right, left] node{0} (r1);
+\end{tikzpicture}
+\end{center}
+
+\noindent $q_0$ moves via $\varepsilon$ into a $2$-cycle (tracking length mod $2$, accepting at the start of the cycle) and, separately, via $\varepsilon$ into a $5$-cycle (tracking length mod $5$, accepting at the start of that cycle).
+
+\bigskip
+\begin{example}
+$L = \{ w \mid 2^{\text{nd}} \text{ last symbol in } w \text{ is } 1 \}$.
+
+\begin{center}
+\begin{tikzpicture}[>=stealth, node distance=3cm, thick]
+    \node[state, initial] (q0) {$q_0$};
+    \node[state, right of=q0] (q1) {$q_1$};
+    \node[state, accepting, right of=q1] (q2) {$q_2$};
+
+    \draw (q0) edge[loop above] node{$0,1$} (q0)
+          (q0) edge[above] node{1} (q1)
+          (q1) edge[above] node{$0,1$} (q2);
+\end{tikzpicture}
+\end{center}
+
+\noindent\textbf{Construction of DFA for this} (subset construction):
+
+\begin{center}
+\begin{tikzpicture}[>=stealth, node distance=3.2cm, thick]
+    \node[state, initial] (q0) {$q_0$};
+    \node[state, right of=q0] (q01) {$q_{01}$};
+    \node[state, accepting, below of=q01] (q012) {$q_{012}$};
+    \node[state, accepting, right of=q012] (q02) {$q_{02}$};
+
+    \draw (q0) edge[loop above] node{0} (q0)
+          (q0) edge[bend left, above] node{1} (q01)
+          (q01) edge[bend left, below] node{0} (q0)
+          (q01) edge[right] node{0} (q02)
+          (q01) edge[left] node{1} (q012)
+          (q012) edge[loop below] node{$0,1$} (q012)
+          (q02) edge[bend left, above] node{1} (q01)
+          (q02) edge[bend right=60, below] node{0} (q0);
+\end{tikzpicture}
+\end{center}
+
+\[
+\delta(q_0,0) = q_0,\quad \delta(q_0,1) = q_{01}, \quad
+\delta(q_{01},0) = q_{02}, \quad \delta(q_{01},1) = q_{012},
+\]
+\[
+\delta(q_{02},0) = q_0, \quad \delta(q_{02},1) = q_{01}, \quad
+\delta(q_{012},0) = q_{012}, \quad \delta(q_{012},1) = q_{012},
+\]
+\[
+F = \{q_{02}, q_{012}\}.
+\]
+
+\begin{greybox}
+\begin{remark}
+States that are not reachable from the start state are known as \emph{dead states}.
+\end{remark}
+\end{greybox}
+\end{example}
+
+\section{Closure under Union, Concatenation, and Star}
+
+\begin{blackbox}
+\begin{theorem}
+If $L_1$ and $L_2$ are regular, then $L_1 \cup L_2$, $L_1 L_2$, and $L_1^*$ are also regular.
+\end{theorem}
+\end{blackbox}
+
+\begin{greybox}
+\begin{remark}
+For a regular language, we can assume that there is an NFA accepting it with a unique accept state (just use $\varepsilon$-transitions).
+\end{remark}
+\end{greybox}
+
+\begin{proof}
+Let $N_1, N_2$ be NFAs. Assume the following setup:
+
+\begin{center}
+\begin{tabular}{c|c|c|c}
+Language & NFA & start state & end state \\ \hline
+$L_1$ & $N_1$ & $q_1$ & $r_1$ \\
+$L_2$ & $N_2$ & $q_2$ & $r_2$
+\end{tabular}
+\end{center}
+
+\noindent with $L_1 = L(N_1)$ and $L_2 = L(N_2)$.
+
+\medskip
+\noindent\textbf{For $L_1 \cup L_2$:}
+\begin{center}
+\begin{tikzpicture}[>=stealth, thick, node distance=2.6cm]
+    \node[state] (q) {};
+    \node[draw, rectangle, minimum width=2.6cm, minimum height=1cm, above right of=q, xshift=1.2cm, yshift=0.3cm] (N1) {};
+    \node at ($(N1.west)+(0.5,0)$) {$q_1$};
+    \node at ($(N1.east)+(-0.5,0)$) {$r_1$};
+    \node[draw, rectangle, minimum width=2.6cm, minimum height=1cm, below right of=q, xshift=1.2cm, yshift=-0.3cm] (N2) {};
+    \node at ($(N2.west)+(0.5,0)$) {$q_2$};
+    \node at ($(N2.east)+(-0.5,0)$) {$r_2$};
+    \node[state, right of=N1, xshift=1.6cm, yshift=-1.1cm] (r) {};
+
+    \draw (q) edge[above] node{$\varepsilon$} (N1.west)
+          (q) edge[below] node{$\varepsilon$} (N2.west)
+          (N1.east) edge[above] node{$\varepsilon$} (r)
+          (N2.east) edge[below] node{$\varepsilon$} (r);
+\end{tikzpicture}
+\end{center}
+
+So every string that is accepted by $L_1$ or $L_2$ is accepted for this setup as well.
+
+\medskip
+\noindent\textbf{For $L_1 L_2$:}
+\begin{center}
+\begin{tikzpicture}[>=stealth, thick, node distance=2.4cm]
+    \node[state] (q) {};
+    \node[draw, rectangle, minimum width=2.6cm, minimum height=1cm, right of=q, xshift=0.6cm] (N1) {};
+    \node at ($(N1.west)+(0.5,0)$) {$q_1$};
+    \node at ($(N1.east)+(-0.5,0)$) {$r_1$};
+    \node[draw, rectangle, minimum width=2.6cm, minimum height=1cm, right of=N1, xshift=1.6cm] (N2) {};
+    \node at ($(N2.west)+(0.5,0)$) {$q_2$};
+    \node at ($(N2.east)+(-0.5,0)$) {$r_2$};
+    \node[state, right of=N2, xshift=0.6cm] (r) {};
+
+    \draw (q) edge[above] node{$\varepsilon$} (N1.west)
+          (N1.east) edge[above] node{$\varepsilon$} (N2.west)
+          (N2.east) edge[above] node{$\varepsilon$} (r);
+\end{tikzpicture}
+\end{center}
+\noindent NFA for $L_1 \cdot L_2$.
+
+\medskip
+\noindent\textbf{For $L_1^*$:}
+\begin{center}
+\begin{tikzpicture}[>=stealth, thick, node distance=2.6cm]
+    \node[state] (q) {};
+    \node[draw, rectangle, minimum width=2.6cm, minimum height=1cm, right of=q, xshift=0.6cm] (N1) {};
+    \node at ($(N1.west)+(0.5,0)$) {$q_1$};
+    \node at ($(N1.east)+(-0.5,0)$) {$r_1$};
+    \node[state, right of=N1, xshift=0.6cm] (r) {};
+
+    \draw (q) edge[below] node{$\varepsilon$} (N1.west)
+          (N1.east) edge[below] node{$\varepsilon$} (r)
+          (N1.east) edge[bend left=60, above] node{$\varepsilon$} (N1.west);
+\end{tikzpicture}
+\end{center}
+\noindent NFA for $L_1^*$. \hfill$\blacksquare$
+\end{proof}
+
+\section{Regular Expressions}
+
+\begin{itemize}
+    \item Algebraic representation of languages.
+    \item Applications in text editors to find strings, compiler design.
+\end{itemize}
+
+\noindent Egs.\ of regular expressions:
+\begin{center}
+\begin{tabular}{c|l}
+Regular Exp$^n$ & Languages \\ \hline
+$0$ & $\{0\}$ \\
+$\varepsilon$ & $\{\varepsilon\}$ \\
+$0 \cup 01$ & $\{0, 01\}$ \\
+$1^*$ & $\{\varepsilon, 1, 11, \dots\}$ \\
+$(0 \cup 01) \cdot 1^*$ & $\{0, 01, 011, 0111, \dots\}$
+\end{tabular}
+\end{center}
+
+\begin{greybox}
+\begin{definition}
+$R$ is said to be a \emph{regular expression} (RE) if $R$ has one of the following forms:
+\begin{center}
+\begin{tabular}{c|c|l}
+Reg.\ Exp. & Language & Comment \\ \hline
+$\phi$ & $\{\}$ & \\
+$\varepsilon$ & $\{\varepsilon\}$ & \\
+$a$ & $\{a\}$ & $a \in \Sigma$ \\
+$R_1 \cup R_2$ & $L(R_1) \cup L(R_2)$ & \\
+$R_1 \cdot R_2$ & $L(R_1) \cdot L(R_2)$ & \\
+$R_1^*$ & $L(R_1)^*$ & \\
+$(R_1)$ & $L(R_1)$ &
+\end{tabular}
+\end{center}
+\end{definition}
+\end{greybox}
+
+\begin{greybox}
+\begin{remark}
+For every regular expression $R$, there is a unique language $L(R)$ corresponding to it.
+\end{remark}
+\end{greybox}
+
+\begin{itemize}
+    \item We often replace $\cup$ with the $+$ symbol and drop the $\cdot$ symbol.
+    \item Precedence of the symbols/operators (High to Low): $(\,), \ *,\ \cdot,\ \cup$.
+    \item $\phi^* = \{\varepsilon\}$.
+\end{itemize}
+
+\noindent\textbf{More Examples} (RE $\to$ language):
+\begin{center}
+\begin{tabular}{c|l}
+Reg.\ Exp$^n$ & Language \\ \hline
+$01$ & $\{01\}$ \\
+$01 + 1$ & $\{01, 1\}$ \\
+$(01 + \varepsilon) \cdot 1$ & $\{011, 01\}$ \\
+$(0 + 10)^* \cdot (\varepsilon + 1)$ & $\{\varepsilon, 0, 1, 00, 01, 10, 000, 001, 101, 0000, \dots\}$
+\end{tabular}
+\end{center}
+
+\begin{example}
+(Language $\to$ RE)
+\begin{enumerate}[(i)]
+    \item $\{w \mid w \text{ has a single } 1\}$: \quad $R = 0^* \cdot 1 \cdot 0^*$.
+    \item $\{w \mid w \text{ has at most one } 1\}$: \quad $R = 0^* \{\varepsilon, 1\} 0^* = 0^* + 0^*10^*$.
+    \item $\{w \mid |w| \equiv 0 \pmod 3\}$:
+    \[
+    R = \{000, 001, \dots, 110, 111\}^* = ((0+1)(0+1)(0+1))^*.
+    \]
+    \item $\{w \mid w \text{ has a } 1 \text{ at every odd position and } |w| \text{ is odd}\}$:
+    \[
+    R = \{10, 11\}^* \{1\} = (1(0+1))^* \cdot 1.
+    \]
+\end{enumerate}
+\end{example}
+
+\subsection{Properties of RE}
+
+\begin{enumerate}[1)]
+    \item[1)] (a) $R_1 + (R_2 + R_3) = (R_1 + R_2) + R_3$ \\
+    (b) $R_1(R_2 R_3) = (R_1 R_2) R_3$
+    \item[2)] (a) $(R_1 + R_2) \cdot R_3 = R_1 \cdot R_3 + R_2 \cdot R_3$ \\
+    (b) $R_1 \cdot (R_2 + R_3) = R_1 R_2 + R_1 R_3$
+    \item[3)] $R_1 + R_2 = R_2 + R_1$ \quad (only $+$ is commutative)
+    \item[4)] (a) $R_1 + \phi = R_1$ \\
+    (b) $R_1 \varepsilon = R_1$
+    \item[5)] $(R_1^*)^* = R_1^*$.
+\end{enumerate}
+
+\begin{blackbox}
+\begin{theorem}
+A language $L$ is regular iff there is a regular exp$^n$ $R$ s.t.\ $L = L(R)$.
+\end{theorem}
+\end{blackbox}
+
+\begin{proof}[Proof (if part)]
+This proof is based on case analysis.
+
+\begin{center}
+\begin{tabular}{c|c}
+RE & NFA \\ \hline
+$\phi$ & single non-accepting state \\
+$\varepsilon$ & single start = accept state \\
+$a$ & two states, start $\xrightarrow{a}$ accept
+\end{tabular}
+\end{center}
+
+\noindent\textbf{$R_1 + R_2$:} Suppose NFA of $R_1$ \& $R_2$ resp.\ are
+\begin{center}
+\begin{tikzpicture}[thick]
+    \node[draw, rectangle, minimum width=2.6cm, minimum height=1cm] (N1) {};
+    \node at ($(N1.west)+(0.5,0)$) {$q_1$};
+    \node at ($(N1.east)+(-0.5,0)$) {$r_1$};
+    \node[below=0.2cm of N1] {$N_1$ for $L(R_1)$};
+
+    \node[draw, rectangle, minimum width=2.6cm, minimum height=1cm, right=2cm of N1] (N2) {};
+    \node at ($(N2.west)+(0.5,0)$) {$q_2$};
+    \node at ($(N2.east)+(-0.5,0)$) {$r_2$};
+    \node[below=0.2cm of N2] {$N_2$ for $L(R_2)$};
+\end{tikzpicture}
+\end{center}
+
+\noindent $\therefore$ NFA for $L(R_1) \cup L(R_2)$ or $R_1 + R_2$ is
+\begin{center}
+\begin{tikzpicture}[>=stealth, thick, node distance=2.6cm]
+    \node[state] (q) {};
+    \node[draw, rectangle, minimum width=2.6cm, minimum height=1cm, above right of=q, xshift=1.2cm, yshift=0.3cm] (N1) {};
+    \node at ($(N1.west)+(0.5,0)$) {$q_1$};
+    \node at ($(N1.east)+(-0.5,0)$) {$r_1$};
+    \node[draw, rectangle, minimum width=2.6cm, minimum height=1cm, below right of=q, xshift=1.2cm, yshift=-0.3cm] (N2) {};
+    \node at ($(N2.west)+(0.5,0)$) {$q_2$};
+    \node at ($(N2.east)+(-0.5,0)$) {$r_2$};
+    \node[state, accepting, right of=N1, xshift=1.6cm, yshift=-1.1cm] (r) {};
+
+    \draw (q) edge[above] node{$\varepsilon$} (N1.west)
+          (q) edge[below] node{$\varepsilon$} (N2.west)
+          (N1.east) edge[above] node{$\varepsilon$} (r)
+          (N2.east) edge[below] node{$\varepsilon$} (r);
+\end{tikzpicture}
+\end{center}
+
+\noindent\textbf{$R_1 R_2$:}
+\begin{center}
+\begin{tikzpicture}[>=stealth, thick, node distance=2.4cm]
+    \node[state, initial] (q) {};
+    \node[draw, rectangle, minimum width=2.6cm, minimum height=1cm, right of=q, xshift=0.6cm] (N1) {};
+    \node[below=0.2cm of N1] {NFA for $L(R_1)$};
+    \node[draw, rectangle, minimum width=2.6cm, minimum height=1cm, right of=N1, xshift=1.6cm] (N2) {};
+    \node[below=0.2cm of N2] {NFA for $L(R_2)$};
+    \node[state, accepting, right of=N2, xshift=0.6cm] (r) {};
+
+    \draw (q) edge[above] node{$\varepsilon$} (N1.west)
+          (N1.east) edge[above] node{$\varepsilon$} (N2.west)
+          (N2.east) edge[above] node{$\varepsilon$} (r);
+\end{tikzpicture}
+\end{center}
+
+\noindent\textbf{$R_1^*$:}
+\begin{center}
+\begin{tikzpicture}[>=stealth, thick, node distance=2.6cm]
+    \node[state] (q0) {};
+    \node[draw, rectangle, minimum width=2.6cm, minimum height=1cm, right of=q0, xshift=0.6cm] (N1) {};
+    \node at ($(N1.west)+(0.5,0)$) {$q$};
+    \node at ($(N1.east)+(-0.5,0)$) {$r$};
+    \node[below=0.2cm of N1] {NFA for $L(R_1)$};
+    \node[state, accepting, right of=N1, xshift=0.6cm] (r0) {};
+
+    \draw (q0) edge[loop above] node{$\varepsilon$} (q0)
+          (q0) edge[below] node{$\varepsilon$} (N1.west)
+          (N1.east) edge[below] node{$\varepsilon$} (r0)
+          (N1.east) edge[bend left=60, above] node{$\varepsilon$} (N1.west);
+\end{tikzpicture}
+\end{center}
+
+So given an RE, we can explicitly construct the NFA.
+\end{proof}
+
+\section{Converting a DFA to a Regular Expression}
+
+A GNFA is an NFA with the transitions being labelled by regular expressions.
+
+\begin{greybox}
+\begin{definition}
+A GNFA is said to \emph{accept} a string $w$ if $w$ can be written as $w = w_1 \cdots w_k$ (concatenation of $k$ strings) and $\exists$ states $q_0, q_1, \dots, q_k$ in the GNFA such that
+\begin{enumerate}[i)]
+    \item $q_0$ is the start state.
+    \item $q_k$ is an accept state.
+    \item $\forall i$, if $R_i$ is the label on the transition $q_{i-1}$ to $q_i$, then $w_i \in L(R_i)$.
+\end{enumerate}
+\end{definition}
+\end{greybox}
+
+Without loss of generality, we may assume the following:
+\begin{enumerate}[1.]
+    \item GNFA has a unique accept state.
+    \item There are no incoming transitions to the start state and no outgoing transitions from the accept state.
+    \item There are transitions from the start state to every other state, and from every state to the unique accept state.
+    \item There is a transition between every pair of states that are not the start/accept state.
+\end{enumerate}
+
+\begin{example}
+Here is an example of a generalized NFA (GNFA), i.e.\ an NFA with regular-expression-labelled transitions.
+
+\begin{center}
+\begin{tikzpicture}[>=stealth, thick, node distance=3.5cm]
+    \node[state, initial] (qs) {$q_S$};
+    \node[state, right of=qs] (q1) {$q_1$};
+    \node[state, below of=q1, yshift=1cm] (q2) {$q_2$};
+    \node[state, accepting, right of=q1] (qacc) {$q_{acc}$};
+
+    \draw (qs) edge[above] node{$01^*$} (q1)
+          (q1) edge[loop above] node{$11$} (q1)
+          (q1) edge[above] node{$0+01$} (qacc)
+          (q1) edge[bend right, right] node{$(11)^*$} (q2)
+          (q2) edge[bend right, left] node{$1$} (q1)
+          (qs) edge[below] node{$\phi$} (q2)
+          (q2) edge[loop below] node{$0$} (q2)
+          (qs) edge[bend right=40, below] node{$00^*$} (qacc);
+\end{tikzpicture}
+\end{center}
+\end{example}
+
+\subsection{A Motivating Example}
+
+\begin{center}
+\begin{tikzpicture}[>=stealth, thick, node distance=3cm]
+    \node[state, initial] (q1) {$q_1$};
+    \node[state, right of=q1] (q2) {$q_2$};
+    \node[state, accepting, below of=q2, yshift=1cm] (q3) {$q_3$};
+
+    \draw (q1) edge[above] node{$a,b$} (q2)
+          (q2) edge[loop above] node{$a$} (q2)
+          (q1) edge[bend right, below] node{$a$} (q3)
+          (q2) edge[bend left, right] node{$b$} (q3)
+          (q3) edge[bend left, left] node{$b$} (q2);
+\end{tikzpicture}
+\end{center}
+
+\noindent\textbf{Algorithm for DFA $\to$ RE:}
+\begin{enumerate}[1.]
+    \item Convert the DFA to a GNFA in the appropriate form.
+    \item Removing a state.
+\end{enumerate}
+
+\medskip
+\noindent\textbf{Step 1} (GNFA form):
+\begin{center}
+\begin{tikzpicture}[>=stealth, thick, node distance=3.2cm]
+    \node[state, initial] (qs) {$q_S$};
+    \node[state, right of=qs] (q1) {$q_1$};
+    \node[state, right of=q1] (q2) {$q_2$};
+    \node[state, accepting, right of=q2] (qa) {$q_A$};
+    \node[state, below of=q2, yshift=1cm] (q3) {$q_3$};
+
+    \draw (qs) edge[above] node{$\varepsilon$} (q1)
+          (q1) edge[above] node{$a,b$} (q2)
+          (q2) edge[loop above] node{$a$} (q2)
+          (q2) edge[above] node{$\varepsilon$} (qa)
+          (q1) edge[bend right, left] node{$a$} (q3)
+          (q3) edge[bend right, right] node{$b$} (q2)
+          (q2) edge[bend left, right] node{$b$} (q3)
+          (q3) edge[bend right=50, above] node{$\varepsilon$} (qa)
+          (qs) edge[bend left=20, above] node{$\phi$} (q2)
+          (qs) edge[bend right=45, below] node{$\phi$} (qa)
+          (qs) edge[bend right=60, below] node{$\phi$} (q3)
+          (q1) edge[bend left=20, above] node{$\phi$} (qa);
+\end{tikzpicture}
+\end{center}
+
+\medskip
+\noindent\textbf{Step 2} (removing a state -- general picture): removing $q_{\text{rem}}$ from $q_A \xrightarrow{R_0} q_B$, $q_A \xrightarrow{R_1} q_{\text{rem}}$, $q_{\text{rem}} \xrightarrow{R_2} q_{\text{rem}}$ (self-loop), $q_{\text{rem}} \xrightarrow{R_3} q_B$ gives
+\[
+q_A \xrightarrow{\ R_0 + R_1 R_2^* R_3\ } q_B.
+\]
+
+\medskip
+\noindent\textbf{Removing $q_1$:} the states $q_S, q_2, q_A, q_3$ remain, with (among others) the transition
+\[
+q_S \xrightarrow{\ \phi + \varepsilon \cdot \phi^*(a+b)\ } q_2, \qquad
+q_S \xrightarrow{\ \phi + \varepsilon \cdot \phi^* \cdot \varepsilon\ } q_A, \qquad
+q_S \xrightarrow{\ \phi + \varepsilon \cdot \phi^* \cdot \phi\ } q_3, \quad \text{etc.}
+\]
+
+\medskip
+\noindent\textbf{Removing $q_2$:} with $q_S, q_A, q_3$ remaining,
+\[
+q_S \xrightarrow{\ \phi + (a+b) \cdot a^* \cdot \phi\ } q_3 = (a+b)a^*b, \qquad
+q_3 \xrightarrow{\ \phi + (b + a(a+b)) \cdot a^* \cdot b\ } q_3 = (b + a(a+b))a^*b,
+\]
+\[
+q_3 \xrightarrow{\ (\varepsilon + a) + (b + a(a+b))a^* \cdot \phi\ } q_A = \varepsilon + a.
+\]
+
+\medskip
+\noindent\textbf{Removing $q_3$:} with $q_S, q_A$ remaining,
+\[
+q_S \xrightarrow{\ \varepsilon + (a+b)a^*b \cdot \big((b+a(a+b))a^*b\big)^* (\varepsilon + a)\ } q_A.
+\]
+
+\noindent Required RE:
+\[
+R = \varepsilon + (a+b)a^*b\big((b+a(a+b))a^*b\big)^*(\varepsilon + a).
+\]
+
+\section{More Closure Properties of Regular Languages}
+
+\subsection*{Complement}
+
+Complement of $L$: \quad $\overline{L} = \Sigma^* \setminus L$.
+
+\begin{blackbox}
+\begin{proposition}
+If $L$ is regular, then $\overline{L}$ is also regular.
+\end{proposition}
+\end{blackbox}
+
+\begin{proof}
+Let $D = (Q, \Sigma, \delta, q_0, F)$ be some DFA for $L$. We construct a DFA $D'$ for $\overline{L}$ where
+\[
+D' = (Q, \Sigma, \delta, q_0, Q \setminus F).
+\]
+\end{proof}
+
+\subsection*{Intersection}
+
+\begin{blackbox}
+\begin{proposition}
+If $L_1$ and $L_2$ are regular, then $L_1 \cap L_2$ is also regular.
+\end{proposition}
+\end{blackbox}
+
+\begin{proof}
+From De Morgan's law, $L_1 \cap L_2 = \overline{\overline{L_1} \cup \overline{L_2}}$.
+
+Now $L_1, L_2$ are regular $\implies \overline{L_1} \cup \overline{L_2}$ is regular $\implies L_1 \cap L_2$ is regular.
+\end{proof}
+
+\subsection*{Set Difference}
+
+\begin{blackbox}
+\begin{proposition}
+If $L_1$ and $L_2$ are regular, then $L_1 \setminus L_2$ is also regular.
+\end{proposition}
+\end{blackbox}
+
+\begin{proof}
+$L_1, L_2$ regular $\implies \overline{L_1}, \overline{L_2}$ regular $\implies L_1 \cap \overline{L_2}$ regular $\implies L_1 \setminus L_2$ regular.
+\end{proof}
+
+\section{Reversal of a Language}
+
+Let $w = a_1 a_2 \cdots a_n$ be a string, then
+\[
+\mathrm{rev}(w) = a_n a_{n-1} \cdots a_2 a_1.
+\]
+
+For a language $L \subseteq \Sigma^*$,
+\[
+\mathrm{rev}(L) := \{ w \in \Sigma^* \mid \mathrm{rev}(w) \in L \}.
+\]
+
+\begin{blackbox}
+\begin{proposition}
+If $L$ is regular, then $\mathrm{rev}(L)$ is also regular.
+\end{proposition}
+\end{blackbox}
+
+\begin{proof}
+Let $D = (Q, \Sigma, \delta, q_0, F)$ be a DFA for $L$. Now define an NFA $D'$ as the following.
+\[
+D' = (Q', \Sigma, \delta', q_0', F'), \qquad \text{where } Q' = Q \cup \{q_0'\}
+\]
+\[
+\delta'(q, a) = \{ r \mid \delta(r, a) = q \}, \qquad
+\delta'(q_0', \varepsilon) = \{ f \mid f \in F \}, \qquad
+F' = \{q_0\}.
+\]
+
+Now $L(D') = \mathrm{rev}(L)$.
+
+$\therefore\ \mathrm{rev}(L)$ is also regular.
+\end{proof}
+
+\section{Homomorphisms}
+
+\begin{greybox}
+\begin{definition}[Homomorphism]
+Let $\Sigma, \Gamma$ be two alphabets. A \emph{homomorphism} $h : \Sigma \to \Gamma^*$ is a map such that if $w = a_1 a_2 \cdots a_n \in \Sigma^*$, then
+\[
+h(w) = h(a_1) h(a_2) \cdots h(a_n).
+\]
+\end{definition}
+\end{greybox}
+
+Also, $h(L) := \{ h(w) \mid w \in L \}$ where $L \subseteq \Sigma^*$.
+
+\begin{blackbox}
+\begin{proposition}
+If $L$ is regular, then $h(L)$ is regular.
+\end{proposition}
+\end{blackbox}
+
+\section{Inverse Homomorphism}
+
+Let $h : \Sigma \to \Gamma^*$ be a homomorphism. For $L \subseteq \Gamma^*$, define
+\[
+h^{-1}(L) = \{ w \in \Sigma^* \mid h(w) \in L \}.
+\]
+
+\begin{blackbox}
+\begin{proposition}
+If $L$ is regular, then $h^{-1}(L)$ is regular.
+\end{proposition}
+\end{blackbox}
+
+\begin{proof}
+Proof of the above two propositions are via the same method: as $L$ is regular, we get a regular expression for $L$, and applying $h$ to each symbol in that RE, we get an RE for $h(L)$, thus it is regular. Same for $h^{-1}(L)$.
+\end{proof}
+
+\chapter*{Non-Regular Languages}
+\addcontentsline{toc}{section}{Non-Regular Languages}
+
+There exist non-regular languages. Non-regular languages require us to maintain some count. The following theorem helps us to sometimes check if a language is non-regular.
+
+\begin{blackbox}
+\begin{lemma}[The Pumping Lemma for Regular Languages]
+Let $L$ be a regular language. Then $\exists\ p \geq 0$ s.t.\ $\forall w \in L$ with $|w| \geq p$, $\exists$ a partition of $w$ as $w = xyz$ such that
+\begin{enumerate}[(i)]
+    \item $|xy| \leq p$
+    \item $y \neq \varepsilon$
+    \item $\forall k \geq 0$, $xy^k z \in L$.
+\end{enumerate}
+\end{lemma}
+\end{blackbox}
+
+\begin{blackbox}
+\begin{corollary}[Contrapositive of the Pumping Lemma]
+$\forall p \geq 0$, $\exists w \in L$ with $|w| \geq p$ such that $\forall$ partitions $w = xyz$ with $|xy| \leq p$, $y \neq \varepsilon$, and $\exists k \geq 0$ s.t.\ $xy^k z \notin L$, then $L$ is not regular.
+\end{corollary}
+\end{blackbox}
+
+\begin{example}
+$L_1 = \{0^n 1^n \mid n \geq 0\}$ is not regular.
+
+Take any $p \geq 0$. Choose $w = 0^p 1^p$, also take any partition of $w = xyz$ with $|xy| \leq p$ and $y \neq \varepsilon$.
+
+$\because |xy| \leq p \implies 1 \notin x, 1 \notin y$, i.e., $x, y$ are made up of $0$'s only.
+
+Choose $k = 0$, then $xy^0 z = 0^l 1^p$ where $l = p - |y| \neq p$.
+
+$\therefore xy^0 z \notin L_1 \implies L_1$ is not regular. \hfill$\blacksquare$
+\end{example}
+
+\begin{example}
+$L_2 = \{a^l b^m c^n \mid l + m \leq n\}$ is not regular. \quad $[\Sigma = \{a,b,c\}]$
+
+Take $p \geq 0$. Choose $w = a^p b^p c^{2p}$. Given a partition $w = xyz$ s.t.\ $|xy| \leq p$ and $y \neq \varepsilon$, we have $y = a^t$ for some $t > 0$.
+
+Choose $k = 2$: $xy^2 z = a^{p+t} b^p c^{2p}$.
+
+Now $p + t + p \not\leq 2p \implies xy^2 z \notin L_2$
+
+$\implies L_2$ is not regular.
+\end{example}
+
+\begin{example}
+$L_3 = \{ w \in \{0,1\}^* \mid \#0 \text{ in } w = \#1 \text{ in } w \}$ is not regular.
+
+Notice that $L(0^*1^*)$ is regular. Suppose for the sake of contradiction, $L_3$ is regular. Then
+\[
+L(0^*1^*) \cap L_3 \text{ is regular}
+\]
+\[
+\implies L_1 = \{0^n 1^n \mid n \geq 0\} \text{ is regular.} \implies\Leftarrow
+\]
+
+$\therefore L_3$ is not regular. \hfill$\blacksquare$
+\end{example}
+
+\begin{example}
+$L_4 = \{0^p \mid p \in \mathbb{P}\}$ (the set of primes) is not regular. \quad $[\Sigma = \{0\}]$
+
+Given $q \geq 0$, choose $w = 0^r$ where $r \in \mathbb{P}$, $r \geq 2q$. Now given a partition of $w = xyz$ where $|xy| \leq q$ \& $|y| = t > 0$, choose $i = r+1$, then
+\[
+xy^i z = 0^{r(1+t)} \notin L_4.
+\]
+
+$\therefore L_4$ is not regular. \hfill$\blacksquare$
+\end{example}
+
+\subsection*{Proof of the Pumping Lemma for Regular Languages}
+
+\begin{proof}
+Let $D = (Q, \Sigma, \delta, q_0, F)$ be a DFA for $L$. Set $p = |Q|$.
+
+\begin{center}
+\begin{tikzpicture}[>=stealth, thick, node distance=3cm]
+    \node[draw, rectangle, minimum width=3cm, minimum height=1.2cm] (D) {};
+    \node[state, initial, left=0.1cm of D.west, anchor=west, xshift=0.3cm] (q0) {$q_0$};
+    \node[state, accepting, right=0.1cm of D.east, anchor=east, xshift=-0.3cm] (qt) {$q_t$};
+    \node[below=0.1cm of D.south] {$D$};
+\end{tikzpicture}
+\end{center}
+
+Given $w \in L$ such that $|w| \geq p$, $\exists$ a sequence of states $q_0, \dots, q_t$ such that $t \geq p$ and $q_t \in F$.
+
+By the Pigeonhole Principle, $\exists\ m, n \geq 0$ such that $0 \leq m < n \leq t$ \& $q_m = q_n$.
+
+\begin{center}
+\begin{tikzpicture}[>=stealth, thick, node distance=2.5cm]
+    \node[state, initial] (q0) {$q_0$};
+    \node[state, right of=q0, xshift=1cm] (qm) {$q_m = q_n$};
+    \node[state, accepting, right of=qm, xshift=1cm] (qt) {$q_t$};
+
+    \draw (q0) edge[above] node{$x$} (qm)
+          (qm) edge[loop above] node{$y$} (qm)
+          (qm) edge[above] node{$z$} (qt);
+\end{tikzpicture}
+\end{center}
+
+Set $x$ = the string from $q_0$ to $q_m$, and let $m$ be the first time there is such a repetition. Set $y$ = string on the loop (first loop), $z$ = remaining string.
+
+Now $\forall i$, $xy^i z \in L$.
+
+$(\ast)$ all the $|w| \geq p$, $|xy| \leq p$, $y \neq \varepsilon$ take care of themselves from $p = |Q|$, $y$ pumped, etc. \hfill$\blacksquare$
+\end{proof}
+
+\chapter*{DFA Minimization}
+\addcontentsline{toc}{section}{DFA Minimization}
+
+DFA minimization is an algorithm that produces a minimal DFA from a given DFA.
+
+\subsection*{Algorithm}
+
+Input: $D = (Q, \Sigma, \delta, q_0, F)$.
+
+\begin{enumerate}[1.]
+    \item Construct a table of all $\{p, q\}$ pairs where $p, q \in Q$.
+    \item Mark a pair $\{p, q\}$ if $p \in F$ and $q \notin F$, or vice versa.
+    \item Repeat the following until no more pairs can be marked: mark $\{p,q\}$ if $\{\delta(p,a), \delta(q,a)\}$ is marked for some $a \in \Sigma$.
+    \item Two or more states are equivalent if they are not marked.
+\end{enumerate}
+
+\begin{example}
+\begin{center}
+\begin{tikzpicture}[>=stealth, thick, node distance=3cm]
+    \node[state, initial] (1) {$1$};
+    \node[state, accepting, above right of=1] (2) {$2$};
+    \node[state, accepting, below right of=1] (3) {$3$};
+    \node[state, right of=2] (4) {$4$};
+    \node[state, right of=3] (5) {$5$};
+    \node[state, accepting, right of=4, yshift=-1.5cm] (6) {$6$};
+
+    \draw (1) edge[above] node{$a$} (2)
+          (1) edge[below] node{$b$} (3)
+          (2) edge[bend left, above] node{$a$} (4)
+          (2) edge[bend right, below] node{$b$} (5)
+          (3) edge[bend right, above] node{$b$} (4)
+          (3) edge[bend left, below] node{$a$} (5)
+          (4) edge[above] node{$a,b$} (6)
+          (5) edge[below] node{$a,b$} (6)
+          (6) edge[loop right] node{$a,b$} (6);
+\end{tikzpicture}
+\end{center}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{c|c|c|c|c|c}
+1 & & & & & \\ \hline
+$\times$ & 2 & & & & \\ \hline
+$\times$ & & 3 & & & \\ \hline
+$\times$ & $\times$ & $\times$ & 4 & & \\ \hline
+$\times$ & $\times$ & $\times$ & & 5 & \\ \hline
+$\times$ & $\times$ & $\times$ & $\times$ & $\times$ & 6
+\end{tabular}
+\end{center}
+
+\begin{center}
+\begin{tikzpicture}[>=stealth, thick, node distance=3.2cm]
+    \node[state, initial] (1) {$1$};
+    \node[state, accepting, right of=1] (23) {$2,3$};
+    \node[state, right of=23] (45) {$4,5$};
+    \node[state, right of=45] (6) {$6$};
+
+    \draw (1) edge[above] node{$a,b$} (23)
+          (23) edge[above] node{$a,b$} (45)
+          (45) edge[above] node{$a,b$} (6)
+          (6) edge[loop above] node{$a,b$} (6);
+\end{tikzpicture}
+\end{center}
+
+This is the minimized DFA for the given DFA above.
+\end{example}
+
+\begin{example}
+\begin{center}
+\begin{tikzpicture}[>=stealth, thick, node distance=3cm]
+    \node[state, initial, accepting] (1) {$1$};
+    \node[state, above right of=1] (6) {$6$};
+    \node[state, right of=6] (3) {$3$};
+    \node[state, accepting, right of=3, xshift=1.5cm] (2) {$2$};
+    \node[state, right of=2, xshift=1.5cm] (5) {$5$};
+    \node[state, below right of=1] (4) {$4$};
+    \node[state, right of=4] (8) {$8$};
+    \node[state, below right of=2] (7) {$7$};
+
+    \draw (1) edge[bend left, above] node{$a$} (6)
+          (6) edge[bend left, below] node{$b$} (1)
+          (6) edge[above] node{$a$} (3)
+          (1) edge[bend right, below] node{$b$} (4)
+          (4) edge[bend right, above] node{$a$} (1)
+          (4) edge[above] node{$b$} (8)
+          (8) edge[bend right=15, below] node{$a$} (4)
+          (3) edge[below] node{$b$} (8)
+          (3) edge[above] node{$a$} (2)
+          (8) edge[above] node{$b$} (2)
+          (2) edge[bend left, above] node{$a$} (5)
+          (5) edge[bend left, below] node{$b$} (2)
+          (2) edge[bend right, below] node{$b$} (7)
+          (7) edge[bend right, above] node{$a$} (2)
+          (7) edge[above] node{$a$} (5)
+          (5) edge[bend left=40, above] node{$b$} (1);
+\end{tikzpicture}
+\end{center}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{c|c|c|c|c|c|c|c}
+1 & & & & & & & \\ \hline
+$\times$ & 2 & & & & & & \\ \hline
+$\times$ & & 3 & & & & & \\ \hline
+$\times$ & $\times$ & & & 4 & & & \\ \hline
+$\times$ & $\times$ & & & & 5 & & \\ \hline
+$\times$ & $\times$ & $\times$ & $\times$ & $\times$ & $\times$ & 6 & \\ \hline
+$\times$ & $\times$ & $\times$ & $\times$ & $\times$ & $\times$ & & 7 \\ \hline
+$\times$ & $\times$ & $\times$ & $\times$ & $\times$ & & & 8
+\end{tabular}
+\end{center}
+
+\[
+\{1 \approx 2\}, \quad \{3 \approx 4\}, \quad \{3 \approx 5\}, \quad \{6 \approx 7\}, \quad \{6 \approx 8\}, \quad \{7 \approx 8\}.
+\]
+
+\noindent So the required minimized DFA is
+\begin{center}
+\begin{tikzpicture}[>=stealth, thick, node distance=4cm]
+    \node[state, initial, accepting] (12) {$1,2$};
+    \node[state, right of=12] (345) {$3,4,5$};
+    \node[state, right of=345] (678) {$6,7,8$};
+
+    \draw (12) edge[bend left, above] node{$a$} (345)
+          (345) edge[bend left, below] node{$b$} (12)
+          (345) edge[bend left, above] node{$b$} (678)
+          (678) edge[bend left, below] node{$a$} (345)
+          (12) edge[bend right=50, below] node{$b$} (678)
+          (678) edge[loop above] node{$a,b$} (678);
+\end{tikzpicture}
+\end{center}
+\end{example}

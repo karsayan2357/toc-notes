@@ -1,0 +1,83 @@
+% ---------------------------------------------------------------------
+%  preamble.tex
+%  Packages, page geometry, headers/footers, title/chapter formatting,
+%  and the abstract environment. Theorem-style boxes, colors, and all
+%  notation macros live in macros.tex.
+% ---------------------------------------------------------------------
+
+\usepackage[margin=0.9in]{geometry}
+\usepackage{amsthm, amssymb, amsmath}
+\usepackage{fancyhdr}
+\usepackage{mathtools}
+\usepackage{mathrsfs}
+\usepackage{lastpage}
+\usepackage{titling}
+\usepackage{lipsum}
+\usepackage{bm}
+\usepackage{dsfont}
+\usepackage{enumerate}
+\usepackage{xcolor}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{bbm}
+\usepackage{tcolorbox}
+\tcbuselibrary{theorems,skins,hooks,breakable}
+\usepackage{titlesec}
+\usepackage{setspace}
+\doublespacing
+\usepackage{palatino, mathpazo}
+\usepackage{tikz}
+\usetikzlibrary{automata, positioning, arrows.meta, calc}
+\usepackage{graphicx}
+
+\pagenumbering{roman}
+\definecolor{linkblue}{RGB}{0,70,140}
+\definecolor{urlblue}{RGB}{90,0,160}
+\definecolor{citegreen}{RGB}{0,110,90}
+\usepackage[
+colorlinks=true,
+linkcolor=linkblue,
+citecolor=citegreen,
+urlcolor=urlblue
+]{hyperref}
+\usepackage{enumerate}
+
+\fancyhf{}
+\renewcommand{\headrulewidth}{0.3pt}
+\renewcommand{\headruleskip}{3pt}
+\fancyhead[LE]{%
+  \small\scshape\thesection\enspace\leftmark}
+\fancyhead[RO]{%
+  \small\scshape\rightmark}
+\fancyhead[RE,LO]{\small\thepage}
+
+
+%%%% CHAPTER / SECTION TITLE FORMATTING %%%%
+
+\titleformat{\chapter}[display]
+  {\normalfont\scshape\bfseries}
+  {\Large\chaptertitlename\ \thechapter}{0pt}{\huge}[\vspace{0.5ex}{\color{gray!60}\hrule}]
+
+\titlespacing*{\chapter}
+  {0pt}     % left margin
+  {50pt}    % space before
+  {40pt}    % space after
+
+
+%%%% ABSTRACT %%%%%
+\renewenvironment{abstract}
+{
+	\cleardoublepage
+	\null\vfill
+	\begin{center}
+		\bfseries\Large Abstract
+	\end{center}
+	\begin{quote}
+		\large
+	}
+	{
+	\end{quote}
+	\vfill\null
+}
+
+\setcounter{tocdepth}{2}

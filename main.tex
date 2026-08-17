@@ -1,0 +1,55 @@
+\documentclass{report}
+\include{preamble}
+\include{macros}
+\begin{document}
+	
+	\large
+	
+	\pagestyle{empty}
+	\include{titlepage}
+
+	\large
+	\begin{abstract}
+
+		\noindent Personal notes on Theory of Computation, following
+		Kozen's \emph{Automata and Computability}. Chapter~1 covers
+		finite automata and regular languages, Chapter~2 covers
+		context-free grammars and pushdown automata, Chapter~3 covers
+		Turing machines and effective computability, and Chapter~4
+		collects selected solutions to the miscellaneous exercises.
+
+	\end{abstract}
+
+	\newpage
+
+	\include{notations}
+
+	\newpage
+
+	\tableofcontents
+
+
+
+	\pagebreak
+
+	\pagestyle{fancy}
+
+	\newpage
+
+	\pagenumbering{arabic}
+
+	\include{chapters/ch1}
+
+	\newpage
+
+	\include{chapters/ch2}
+
+	\newpage
+
+	\include{chapters/ch3}
+
+	\newpage
+
+	\include{chapters/ch4}
+
+\end{document}

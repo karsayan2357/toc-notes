@@ -1,0 +1,34 @@
+% ---------------------------------------------------------------------
+%  notations.tex
+%
+%  An unnumbered chapter holding a longtable of notation. longtable is
+%  used (rather than tabular) so the list can break across pages.
+%
+%  Row syntax:   $symbol$  &  description  \\[0.4em]
+%  The column spec below is  @{} l p{9cm} @{}  -- symbol column sized to
+%  content, description column fixed at 9cm and wrapping. Widen the 9cm
+%  if your descriptions are long.
+%
+%  A few generic rows are kept below as examples. Delete or replace them.
+% ---------------------------------------------------------------------
+
+\chapter*{Notations}
+\addcontentsline{toc}{chapter}{Notations}
+
+\begin{longtable}{@{} l p{9cm} @{}}
+$\bbf_q$ & Finite field of size $q$ \\[0.4em]
+$\bbf_q^*$ & Multiplicative group of $\bbf_q$ \\[0.4em]
+$\bbz_m$ & Residue classes modulo $m$ \\[0.4em]
+$\bbn$ & Set of natural numbers \\[0.4em]
+$[n]$ & The set $\{1, 2, \dots, n\}$ \\[0.4em]
+$\emptyset$ & Empty set \\[0.4em]
+$X \sim \scd$ & Random variable $X$ having distribution $\scd$ \\[0.4em]
+$\mathrm{Unif}(S)$ & Uniform distribution over the set $S$ \\[0.4em]
+$\E[X]$ & Expectation of the random variable $X$ \\[0.4em]
+$\D[X]$ & Variance of the random variable $X$ \\[0.4em]
+$\inp{\bfu}{\bfv}$ & Inner product of the vectors $\bfu$ and $\bfv$ \\[0.4em]
+$A \tensor B$ & Kronecker product of $A$ and $B$ \\[0.4em]
+$A \hprod B$ & Hadamard product of $A$ and $B$ \\[0.4em]
+$\|\bfa\|$ & Hamming weight of $\bfa$ \\[0.4em]
+$\O(\cdot),\ \tO(\cdot)$ & Asymptotic upper bound, and the same suppressing logarithmic factors \\[0.4em]
+\end{longtable}

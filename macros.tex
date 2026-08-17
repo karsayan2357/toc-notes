@@ -1,0 +1,336 @@
+% ---------------------------------------------------------------------
+%  macros.tex
+%  Original color boxes (bluebox, greenbox, purplebox, greybox,
+%  blackbox) exactly as first defined, plain numbered amsthm
+%  environments (theorem, lemma, proposition, definition, remark,
+%  observation, example), and all notation shorthand macros.
+%
+%  Usage in chapters: wrap theorem/lemma/proposition in \blackbox,
+%  and definition/remark/observation/example in \greybox, by hand:
+%
+%    \begin{blackbox}
+%    \begin{theorem}
+%      ...
+%    \end{theorem}
+%    \end{blackbox}
+%
+%    \begin{greybox}
+%    \begin{definition}
+%      ...
+%    \end{definition}
+%    \end{greybox}
+% ---------------------------------------------------------------------
+
+%%%% BASIC TEMPLATE FOR THMS %%%%
+
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[chapter]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{observation}[theorem]{Observation}
+\newtheorem{example}[theorem]{Example}
+
+
+\definecolor{main}{HTML}{5989cf}    % setting main color to be used
+\definecolor{sub}{HTML}{cde4ff}     % setting sub color to be used
+
+\tcbset{
+	sharp corners,
+	colback = white,
+	before skip = 0.2cm,    % add extra space before the box
+	after skip = 0.5cm      % add extra space after the box
+}                           % setting global options for tcolorbox
+
+
+\newtcolorbox{bluebox}{
+	colback = sub, 
+	colframe = main, 
+	boxrule = 0pt, 
+	leftrule = 6pt % left rule weight
+}
+
+\definecolor{maingreen}{HTML}{4a9c59}    % setting main green color
+\definecolor{subgreen}{HTML}{d4edda}     % setting sub green color
+
+\newtcolorbox{greenbox}{
+    colback = subgreen, 
+    colframe = maingreen, 
+    boxrule = 0pt, 
+    leftrule = 6pt
+}
+
+\definecolor{mainpurple}{HTML}{6a1b9a}    % setting main purple color
+\definecolor{subpurple}{HTML}{ede7f6}     % setting sub purple color
+
+\newtcolorbox{purplebox}{
+    colback = subpurple, 
+    colframe = mainpurple, 
+    boxrule = 0pt, 
+    leftrule = 6pt
+}
+
+\definecolor{maingrey}{HTML}{616161}   % main grey color
+\definecolor{subgrey}{HTML}{f5f5f5}    % light grey background
+
+\newtcolorbox{greybox}{
+    colback = subgrey,
+    colframe = maingrey,
+    boxrule = 0pt,
+    leftrule = 6pt
+}
+
+\definecolor{mainblack}{HTML}{000000}   % full black border
+\definecolor{subblack}{HTML}{e0e0e0}    % dark body background
+
+\newtcolorbox{blackbox}{
+    colback = black!5,
+    colframe = mainblack,
+    boxrule = 0pt,
+    leftrule = 6pt
+}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%  NOTATION MACROS  %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\mon}{\mathrm{mon}}
+
+%% inner prod %%%
+\newcommand{\inp}[2]{\langle #1, #2 \rangle}
+
+%% o-operation %%
+\newcommand{\tensor}{\otimes}
+\newcommand{\xor}{\oplus}
+\newcommand{\hprod}{\odot}
+
+%% matrix %%
+\newcommand{\rank}{\mathsf{rank}}
+
+%% Probability %%
+\newcommand{\E}{\mathds{E}}
+\newcommand{\D}{\mathds{D}}
+\renewcommand{\Pr}{\mathds{P}\mathrm{r}}
+
+%% Random %%
+\newcommand{\OR}{\operatorname{OR}}
+\newcommand{\Sym}{\operatorname{Sym}}
+\newcommand{\supp}{\operatorname{supp}}
+\DeclareMathOperator{\wt}{\mathsf{wt}}
+
+%% big-oh %%
+\renewcommand{\O}{\mathcal{O}}
+\renewcommand{\o}{\mathcal{o}}
+\newcommand{\tO}{\tilde{\mathcal{O}}}
+
+
+%%%%%%%%%%%%%%%%%
+%%%%%% LETTERS %%%%%%%
+%%%%%%%%%%%%%%%%%%
+
+%%%% BB %%%%%%%
+
+\newcommand{\bba}{\mathbb{A}}
+\newcommand{\bbb}{\mathbb{B}}
+\newcommand{\bbc}{\mathbb{C}}
+\newcommand{\bbd}{\mathbb{D}}
+\newcommand{\bbe}{\mathbb{E}}
+\newcommand{\bbf}{\mathbb{F}}
+\newcommand{\bbg}{\mathbb{G}}
+\newcommand{\bbh}{\mathbb{H}}
+\newcommand{\bbi}{\mathbb{I}}
+\newcommand{\bbj}{\mathbb{J}}
+\newcommand{\bbk}{\mathbb{K}}
+\newcommand{\bbl}{\mathbb{L}}
+\newcommand{\bbm}{\mathbb{M}}
+\newcommand{\bbn}{\mathbb{N}}
+\newcommand{\bbo}{\mathbb{O}}
+\newcommand{\bbp}{\mathbb{P}}
+\newcommand{\bbq}{\mathbb{Q}}
+\newcommand{\bbr}{\mathbb{R}}
+\newcommand{\bbs}{\mathbb{S}}
+\newcommand{\bbt}{\mathbb{T}}
+\newcommand{\bbu}{\mathbb{U}}
+\newcommand{\bbv}{\mathbb{V}}
+\newcommand{\bbw}{\mathbb{W}}
+\newcommand{\bbx}{\mathbb{X}}
+\newcommand{\bby}{\mathbb{Y}}
+\newcommand{\bbz}{\mathbb{Z}}
+
+%%%% CAL %%%%%%%
+
+\newcommand{\cala}{\mathcal{A}}
+\newcommand{\calb}{\mathcal{B}}
+\newcommand{\calc}{\mathcal{C}}
+\newcommand{\cald}{\mathcal{D}}
+\newcommand{\cale}{\mathcal{E}}
+\newcommand{\calf}{\mathcal{F}}
+\newcommand{\calg}{\mathcal{G}}
+\newcommand{\calh}{\mathcal{H}}
+\newcommand{\cali}{\mathcal{I}}
+\newcommand{\calj}{\mathcal{J}}
+\newcommand{\calk}{\mathcal{K}}
+\newcommand{\call}{\mathcal{L}}
+\newcommand{\calm}{\mathcal{M}}
+\newcommand{\caln}{\mathcal{N}}
+\newcommand{\calo}{\mathcal{O}}
+\newcommand{\calp}{\mathcal{P}}
+\newcommand{\calq}{\mathcal{Q}}
+\newcommand{\calr}{\mathcal{R}}
+\newcommand{\cals}{\mathcal{S}}
+\newcommand{\calt}{\mathcal{T}}
+\newcommand{\calu}{\mathcal{U}}
+\newcommand{\calv}{\mathcal{V}}
+\newcommand{\calw}{\mathcal{W}}
+\newcommand{\calx}{\mathcal{X}}
+\newcommand{\caly}{\mathcal{Y}}
+\newcommand{\calz}{\mathcal{Z}}
+
+%%%%%% FRAK %%%%%%
+
+\newcommand{\fraka}{\mathfrak{A}}
+\newcommand{\frakb}{\mathfrak{B}}
+\newcommand{\frakc}{\mathfrak{C}}
+\newcommand{\frakd}{\mathfrak{D}}
+\newcommand{\frake}{\mathfrak{E}}
+\newcommand{\frakf}{\mathfrak{F}}
+\newcommand{\frakg}{\mathfrak{G}}
+\newcommand{\frakh}{\mathfrak{H}}
+\newcommand{\fraki}{\mathfrak{I}}
+\newcommand{\frakj}{\mathfrak{J}}
+\newcommand{\frakk}{\mathfrak{K}}
+\newcommand{\frakl}{\mathfrak{L}}
+\newcommand{\frakm}{\mathfrak{M}}
+\newcommand{\frakn}{\mathfrak{N}}
+\newcommand{\frako}{\mathfrak{O}}
+\newcommand{\frakp}{\mathfrak{P}}
+\newcommand{\frakq}{\mathfrak{Q}}
+\newcommand{\frakr}{\mathfrak{R}}
+\newcommand{\fraks}{\mathfrak{S}}
+\newcommand{\frakt}{\mathfrak{T}}
+\newcommand{\fraku}{\mathfrak{U}}
+\newcommand{\frakv}{\mathfrak{V}}
+\newcommand{\frakw}{\mathfrak{W}}
+\newcommand{\frakx}{\mathfrak{X}}
+\newcommand{\fraky}{\mathfrak{Y}}
+\newcommand{\frakz}{\mathfrak{Z}}
+
+%%%% BF %%%%%%
+
+\newcommand{\bfA}{\mathbf{A}}
+\newcommand{\bfB}{\mathbf{B}}
+\newcommand{\bfC}{\mathbf{C}}
+\newcommand{\bfD}{\mathbf{D}}
+\newcommand{\bfE}{\mathbf{E}}
+\newcommand{\bfF}{\mathbf{F}}
+\newcommand{\bfG}{\mathbf{G}}
+\newcommand{\bfH}{\mathbf{H}}
+\newcommand{\bfI}{\mathbf{I}}
+\newcommand{\bfJ}{\mathbf{J}}
+\newcommand{\bfK}{\mathbf{K}}
+\newcommand{\bfL}{\mathbf{L}}
+\newcommand{\bfM}{\mathbf{M}}
+\newcommand{\bfN}{\mathbf{N}}
+\newcommand{\bfO}{\mathbf{O}}
+\newcommand{\bfP}{\mathbf{P}}
+\newcommand{\bfQ}{\mathbf{Q}}
+\newcommand{\bfR}{\mathbf{R}}
+\newcommand{\bfS}{\mathbf{S}}
+\newcommand{\bfT}{\mathbf{T}}
+\newcommand{\bfU}{\mathbf{U}}
+\newcommand{\bfV}{\mathbf{V}}
+\newcommand{\bfW}{\mathbf{W}}
+\newcommand{\bfX}{\mathbf{X}}
+\newcommand{\bfY}{\mathbf{Y}}
+\newcommand{\bfZ}{\mathbf{Z}}
+
+\newcommand{\bfa}{\mathbf{a}}
+\newcommand{\bfb}{\mathbf{b}}
+\newcommand{\bfc}{\mathbf{c}}
+\newcommand{\bfd}{\mathbf{d}}
+\newcommand{\bfe}{\mathbf{e}}
+\newcommand{\bff}{\mathbf{f}}
+\newcommand{\bfg}{\mathbf{g}}
+\newcommand{\bfh}{\mathbf{h}}
+\newcommand{\bfi}{\mathbf{i}}
+\newcommand{\bfj}{\mathbf{j}}
+\newcommand{\bfk}{\mathbf{k}}
+\newcommand{\bfl}{\mathbf{l}}
+\newcommand{\bfm}{\mathbf{m}}
+\newcommand{\bfn}{\mathbf{n}}
+\newcommand{\bfo}{\mathbf{o}}
+\newcommand{\bfp}{\mathbf{p}}
+\newcommand{\bfq}{\mathbf{q}}
+\newcommand{\bfr}{\mathbf{r}}
+\newcommand{\bfs}{\mathbf{s}}
+\newcommand{\bft}{\mathbf{t}}
+\newcommand{\bfu}{\mathbf{u}}
+\newcommand{\bfv}{\mathbf{v}}
+\newcommand{\bfw}{\mathbf{w}}
+\newcommand{\bfx}{\mathbf{x}}
+\newcommand{\bfy}{\mathbf{y}}
+\newcommand{\bfz}{\mathbf{z}}
+
+
+%%% SCRIPT %%%%
+
+\newcommand{\sca}{\mathscr{A}}
+\newcommand{\scb}{\mathscr{B}}
+\newcommand{\scc}{\mathscr{C}}
+\newcommand{\scd}{\mathscr{D}}
+\newcommand{\sce}{\mathscr{E}}
+\newcommand{\scf}{\mathscr{F}}
+\newcommand{\scg}{\mathscr{G}}
+\newcommand{\sch}{\mathscr{H}}
+\newcommand{\sci}{\mathscr{I}}
+\newcommand{\scj}{\mathscr{J}}
+\newcommand{\sck}{\mathscr{K}}
+\newcommand{\scl}{\mathscr{L}}
+\newcommand{\scm}{\mathscr{M}}
+\newcommand{\scn}{\mathscr{N}}
+\newcommand{\sco}{\mathscr{O}}
+\newcommand{\scp}{\mathscr{P}}
+\newcommand{\scq}{\mathscr{Q}}
+\newcommand{\scr}{\mathscr{R}}
+\newcommand{\scs}{\mathscr{S}}
+\newcommand{\sct}{\mathscr{T}}
+\newcommand{\scu}{\mathscr{U}}
+\newcommand{\scv}{\mathscr{V}}
+\newcommand{\scw}{\mathscr{W}}
+\newcommand{\scx}{\mathscr{X}}
+\newcommand{\scy}{\mathscr{Y}}
+\newcommand{\scz}{\mathscr{Z}}
+
+
+%%%%% DS FONTS %%%%
+\newcommand{\dsa}{\mathds{A}}
+\newcommand{\dsb}{\mathds{B}}
+\newcommand{\dsc}{\mathds{C}}
+\newcommand{\dsd}{\mathds{D}}
+\newcommand{\dse}{\mathds{E}}
+\newcommand{\dsf}{\mathds{F}}
+\newcommand{\dsg}{\mathds{G}}
+\newcommand{\dsh}{\mathds{H}}
+\newcommand{\dsi}{\mathds{I}}
+\newcommand{\dsj}{\mathds{J}}
+\newcommand{\dsk}{\mathds{K}}
+\newcommand{\dsl}{\mathds{L}}
+\newcommand{\dsm}{\mathds{M}}
+\newcommand{\dsn}{\mathds{N}}
+\newcommand{\dso}{\mathds{O}}
+\newcommand{\dsp}{\mathds{P}}
+\newcommand{\dsq}{\mathds{Q}}
+\newcommand{\dsr}{\mathds{R}}
+\newcommand{\dss}{\mathds{S}}
+\newcommand{\dst}{\mathds{T}}
+\newcommand{\dsu}{\mathds{U}}
+\newcommand{\dsv}{\mathds{V}}
+\newcommand{\dsw}{\mathds{W}}
+\newcommand{\dsx}{\mathds{X}}
+\newcommand{\dsy}{\mathds{Y}}
+\newcommand{\dsz}{\mathds{Z}}
