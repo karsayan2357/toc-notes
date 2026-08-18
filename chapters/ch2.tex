@@ -1,3 +1,484 @@
 \chapter{Context-Free Grammars and Pushdown Automata}
 
-% Notes from iPad (two files) go here once provided.
+\section{Context-Free Grammars}
+
+\begin{greybox}
+\begin{definition}[Context-Free Grammar]
+A \emph{CFG} is a quadruple $G = (N, \Sigma, P, S)$
+\begin{itemize}
+    \item $N$ -- finite set (nonterminal symbols)
+    \item $\Sigma$ -- finite set, $N \cap \Sigma = \emptyset$ (terminal symbols)
+    \item $P \subseteq N \times (N \cup \Sigma)^*$ finite (productions)
+    \item $S \in N$ (start symbol)
+\end{itemize}
+\end{definition}
+\end{greybox}
+
+We say $G$ accepts the language
+\[
+L(G) := \left\{ x \in \Sigma^* \ \middle|\ S \xrightarrow[G]{*} x \right\}.
+\]
+This is called a \emph{context-free language} (CFL).
+
+\begin{example}
+$\{0^n 1^n \mid n \geq 0\}$ is a CFL.
+
+\noindent\textit{Proof.} Consider $S \to 0S1 \mid \varepsilon$.
+\end{example}
+
+\begin{example}
+Set of all balanced parentheses is a CFL.
+
+\noindent\textit{Proof.} $L = \{ x \in \{[,]\}^* \mid x \text{ is balanced} \}$.
+
+\begin{greybox}
+\begin{observation}
+$x \in \{[,]\}^*$ is balanced iff
+\begin{enumerate}[(1)]
+    \item $L(x) = R(x)$, and
+    \item $L(y) \geq R(y)\ \ \forall$ prefix $y$ of $x$.
+\end{enumerate}
+(Here $L(x)$, $R(x)$ denote the number of left and right brackets in $x$ respectively.)
+\end{observation}
+\end{greybox}
+
+Consider the CFG
+\[
+G:\quad S \to [S] \mid SS \mid \varepsilon.
+\]
+
+(Why?) We use induction. Both directions:
+\begin{enumerate}[(i)]
+    \item If $S \xrightarrow[G]{*} x$ then $x$ balanced.
+    \item If $x$ is balanced, then $S \xrightarrow[G]{*} x$ (just case analysis). \hfill$\blacksquare$
+\end{enumerate}
+\end{example}
+
+\begin{example}
+$\{0^n 1^m \mid n > 0,\ n \leq m \leq 2n\}$.
+
+\[
+S \to ASB \mid \varepsilon, \qquad A \to 0, \qquad B \to 1 \mid 11.
+\]
+\end{example}
+
+\begin{example}
+$\{ x \in \{0,1\}^* \mid \#_0(x) = \#_1(x) \}$.
+
+\[
+S \to 0S1S \mid 1S0S \mid \varepsilon.
+\]
+\end{example}
+
+\subsection*{All Regular Languages are CFLs}
+
+\begin{blackbox}
+\begin{proposition}
+Every regular language is a CFL.
+\end{proposition}
+\end{blackbox}
+
+\begin{proof}
+Let $L$ be a regular language with the DFA $M = (Q, \Sigma, \delta, q_0, F)$. We construct a CFG $G$ for $L$:
+\[
+N = \{ R_i \mid q_i \in Q \}, \qquad \Sigma = \Sigma,
+\]
+\[
+P = \{ (R_i, aR_j) \mid \text{if } \delta(q_i, a) = q_j,\ a \in \Sigma \} \ \cup\ \{ (R_i, \varepsilon) \mid q_i \in F \},
+\]
+\[
+S = R_0.
+\]
+
+Then we have $L(G) = L$.
+\end{proof}
+
+\section{Parse Trees, Derivation \& Ambiguity}
+
+\begin{greybox}
+\begin{definition}[Parse Tree]
+For a CFG $G$, a \emph{parse tree} of $w \in L(G)$ w.r.t.\ $G$ is a rooted ordered tree corresponding to a derivation of $w$ by $G$.
+\end{definition}
+\end{greybox}
+
+\begin{example}
+$L = \{0^n1^n \mid n \geq 0\}$, $S \to 0S1 \mid \varepsilon$, $w = 0^3 1^3$.
+
+\begin{center}
+\begin{tikzpicture}[level distance=1.4cm, sibling distance=2.2cm, thick]
+\node {$S$}
+    child { node {$0$} }
+    child { node {$S$}
+        child { node {$0$} }
+        child { node {$S$}
+            child { node {$0$} }
+            child { node {$S$}
+                child { node {$\varepsilon$} } }
+            child { node {$1$} } }
+        child { node {$1$} } }
+    child { node {$1$} };
+\end{tikzpicture}
+\end{center}
+\end{example}
+
+\begin{greybox}
+\begin{remark}[Some Properties]
+\begin{enumerate}[(1)]
+    \item All internal nodes are variables.
+    \item All leaf nodes are from $\Sigma \cup \{\varepsilon\}$.
+    \item If $\varepsilon$ is a leaf node, then it is the only child.
+    \item Concatenation of all symbols from left to right (all leaf nodes) gives the derivation of $w$.
+\end{enumerate}
+\end{remark}
+\end{greybox}
+
+Parse trees may not be unique. Take $G_2 : S \to 0S1S \mid 1S0S \mid \varepsilon$, $w = 0101$. Two parse trees for $w$ w.r.t.\ $G_2$ are:
+
+\begin{center}
+\begin{tabular}{cc}
+$T_1$: &
+\begin{tikzpicture}[level distance=1.3cm, sibling distance=1.6cm, thick, baseline=-2cm]
+\node {$S$}
+    child { node {$0$} }
+    child { node {$S$}
+        child { node {$\varepsilon$} } }
+    child { node {$1$} }
+    child { node {$S$}
+        child { node {$0$} }
+        child { node {$S$}
+            child { node {$\varepsilon$} } }
+        child { node {$1$} }
+        child { node {$S$}
+            child { node {$\varepsilon$} } } };
+\end{tikzpicture}
+\\[1cm]
+$T_2$: &
+\begin{tikzpicture}[level distance=1.3cm, sibling distance=1.6cm, thick, baseline=-2cm]
+\node {$S$}
+    child { node {$0$} }
+    child { node {$S$}
+        child { node {$1$} }
+        child { node {$S$}
+            child { node {$\varepsilon$} } }
+        child { node {$0$} }
+        child { node {$S$}
+            child { node {$\varepsilon$} } } }
+    child { node {$1$} }
+    child { node {$S$}
+        child { node {$\varepsilon$} } };
+\end{tikzpicture}
+\end{tabular}
+\end{center}
+
+\medskip
+\noindent Corresponding derivations (replacing the \emph{leftmost} variable first at each step -- called \emph{leftmost derivation}):
+
+\[
+T_1:\quad S \Rightarrow 0S1S \Rightarrow 01S \Rightarrow 010S1S \Rightarrow 0101S \Rightarrow 0101.
+\]
+\[
+T_2:\quad S \Rightarrow 0S1S \Rightarrow 0S1 \Rightarrow 01S0S1 \Rightarrow 0 1 0 S 1 \Rightarrow 0101.
+\]
+
+\begin{greybox}
+\begin{definition}[Ambiguous string]
+A string $w$ is called \emph{ambiguous} if it has at least two different leftmost derivations.
+\end{definition}
+\end{greybox}
+
+\begin{blackbox}
+\begin{lemma}
+$w$ is ambiguous iff it has two distinct parse trees.
+\end{lemma}
+\end{blackbox}
+
+\begin{greybox}
+\begin{definition}
+A CFG $G$ is \emph{ambiguous} if $\exists\ w \in L(G)$ which is ambiguous.
+
+A CFL $L$ is \emph{ambiguous} if $\forall$ CFG $G$ with $L(G) = L$, $G$ is ambiguous.
+\end{definition}
+\end{greybox}
+
+\section{Normal Forms}
+
+\begin{greybox}
+\begin{definition}[Chomsky Normal Form]
+A CFG $G = (N, \Sigma, P, S)$ is said to be in \emph{Chomsky Normal Form} (CNF) if
+\begin{enumerate}[(i)]
+    \item Every production rule is of the form
+    \[
+    A \to BC \quad (B, C \in N), \qquad A \to a \quad (a \in \Sigma).
+    \]
+    \item $S$ doesn't appear on the r.h.s.\ of any rule.
+    \item The rule $S \to \varepsilon$ may be present, depending on whether $\varepsilon \in L(G)$ or not.
+\end{enumerate}
+\end{definition}
+\end{greybox}
+
+\begin{blackbox}
+\begin{theorem}
+Every CFL has a CNF grammar.
+\end{theorem}
+\end{blackbox}
+
+\begin{proof}
+Proof via an algorithm. Let $G = (N, \Sigma, P, S)$ be a CFG for the CFL $L$. We shall convert $G$ to a CNF grammar.
+
+\begin{enumerate}[1.]
+    \item If $S$ appears on the r.h.s.\ of any rule, add a new start variable $S_0$ and add the rule $S_0 \to S$.
+
+    \item (Removing $\varepsilon$-transitions) For a rule $A \to \varepsilon$, remove this rule, and for every occurrence of $A$ on the r.h.s.\ (of any other rule), remove that occurrence and add a new rule. E.g.
+    \[
+    A \to \varepsilon, \quad B \to uAv, \quad C \to u_1 A u_2 A u_3
+    \]
+    \[
+    \Longrightarrow \quad B \to uAv \mid uv, \qquad C \to u_1Au_2Au_3 \mid u_1u_2Au_3 \mid u_1Au_2u_3 \mid u_1u_2u_3.
+    \]
+
+    \item (Removing Unit Rules)
+    \[
+    A \to B, \quad B \to u \qquad \Longrightarrow \qquad A \to u, \quad B \to u.
+    \]
+
+    \item (Shortening R.H.S.) For $A \to u_1 u_2 \cdots u_k$ ($k \geq 3$), add a variable $A_1$:
+    \[
+    A_1 \to u_1 u_2, \qquad A \to A_1 u_3 \cdots u_k.
+    \]
+
+    \item (Add Variables) For $A \to uv$ with $u \in \Sigma$:
+    \[
+    U_1 \to u, \qquad A \to U_1 v.
+    \]
+\end{enumerate}
+
+\medskip
+\noindent\textbf{Example.} Consider
+\[
+S \to ASB, \qquad A \to aASA \mid a \mid \varepsilon, \qquad B \to SbS \mid A \mid bb.
+\]
+
+\medskip
+\noindent\textbf{Step 1:}
+\[
+S_0 \to S, \qquad S \to ASB, \qquad A \to aASA \mid a \mid \varepsilon, \qquad B \to SbS \mid A \mid bb.
+\]
+
+\medskip
+\noindent\textbf{Step 2} (remove $A \to \varepsilon$):
+\[
+S_0 \to S, \qquad S \to ASB \mid SB, \qquad A \to aASA \mid aSA \mid aAS \mid a \mid aS,
+\]
+\[
+B \to SbS \mid A \mid bb \mid \varepsilon.
+\]
+
+\medskip
+\noindent\textbf{Step 2 continued} (remove $B \to \varepsilon$):
+\[
+S_0 \to S, \qquad S \to ASB \mid AS \mid SB, \qquad A \to aASA \mid aSA \mid aAS \mid a \mid aS,
+\]
+\[
+B \to SbS \mid A \mid bb.
+\]
+\end{proof}
+
+\section{Pumping Lemma for CFLs}
+
+\begin{blackbox}
+\begin{lemma}[Pumping Lemma for CFLs]
+For a CFL $L$, $\exists\ k \in \mathbb{N}$ such that $\forall z \in L$ with $|z| \geq k$, $z$ can be partitioned like $z = uvwxy$ such that
+\begin{enumerate}[1.]
+    \item $|vwx| \leq k$
+    \item $vx \neq \varepsilon$
+    \item $uv^iwx^iy \in L$ for all $i \geq 0$.
+\end{enumerate}
+\end{lemma}
+\end{blackbox}
+
+\begin{proof}
+Consider a CFL $L$ and let $G = (N, \Sigma, P, S)$ be the CNF grammar for $L$. Consider $k = 2^{n+1}$ and $z \in L$ with $|z| \geq k$. Consider a parse tree of $z$ w.r.t.\ $G$.
+\[
+\because\ \text{number of terminals} \geq 2^{n+1} \implies \text{depth of this tree} \geq n+1, \qquad n = |N|.
+\]
+
+Now consider the longest path in this tree; of course $\exists$ at least one repetition of a non-terminal (by the Pigeonhole Principle).
+
+Take the first terminal occurrence from the leaf to root direction, let that non-terminal be $X$. Suppose $w$ is the string generated by the lower occurrence of $X$ and $vwx$ be the string generated by the upper occurrence of $X$; of course $|vx| \neq 0$ as we are in CNF.
+
+Define $T$ = tree with upper $X$ as root, $t$ = tree with lower $X$ as root.
+
+Now if we remove $t$ and replace it by a copy of $T$, we yield the string $uv^2wx^2y$. Doing it again yields $uv^3wx^3y$, and so on. Replacing $T$ by $t$ yields $uv^0wx^0y$.
+
+Note that $|vwx| \leq k$, as if not, then the tree $T$ would have $\geq n+1$ depth, hence PHP would give a contradiction.
+\end{proof}
+
+\section{Proving a Language is not a CFL}
+
+\subsection*{A Demon Game}
+
+To show a language $L$ is not a CFL, one may use the following game (it may not always work).
+
+\begin{enumerate}[1.]
+    \item Demon picks $k \in \mathbb{N}_0$.
+    \item You pick $z \in L$ of length $\geq k$.
+    \item Demon gives you a partition $z = uvwxy$ with $|vx| > 0$, $|vwx| \leq k$.
+    \item If you get $i \in \mathbb{N}_0$ such that $uv^iwx^iy \notin L$, you win.
+\end{enumerate}
+
+\begin{example}
+$L = \{0^n1^n0^n \mid n \geq 0\}$ is not a CFL.
+
+Take $z = 0^k1^k0^k$. Let $z = uvwxy$ be a partition given to us (with $k$ given).
+
+If $vwx = 1^m$ for some $m \leq k$, then done.
+
+Else $vwx = 0^a1^b$ or $1^a0^b$ with $a+b \leq k$. Now doing $v^iwx^i$, after some point, the balance between the number of $0$'s on the left and right doesn't exist. \hfill$\blacksquare$
+\end{example}
+
+\begin{example}
+$L = \{ww \mid w \in \Sigma^*\}$ is not context-free. \quad $[\Sigma = \{a,b\}]$
+
+We won't use the pumping lemma directly. Observe that the class of CFLs is closed under union (and, as used below, under intersection with a regular language).
+
+Let $L$ be a CFL, then so is
+\[
+L \cap a^*b^*a^*b^* = \{a^nb^ma^nb^m \mid m,n \in \mathbb{N}_0\} =: L'.
+\]
+
+Now let $k \in \mathbb{N}_0$ and $z = a^kb^ka^kb^k$. Let a partition of $z$ be given as $z = uvwxy$.
+
+\medskip
+\noindent\textbf{Case I:} one of $v, x$ contains both $a$ and $b$. Then $uv^2wx^2y \notin a^*b^*a^*b^*$.
+
+\medskip
+\noindent\textbf{Case II:} $v, x$ are part of the same block $\implies uv^2wx^2y \notin L'$.
+
+\medskip
+\noindent\textbf{Case III:} $v, x$ are part of different blocks $\implies$ the blocks have to be adjacent, then also $uv^2wx^2y$ creates a disbalance.
+
+\[
+\implies L' \text{ is not a CFL.} \implies\Leftarrow
+\]
+
+$\therefore L$ is not context-free. \hfill$\blacksquare$
+\end{example}
+
+\section{Pushdown Automata}
+
+\begin{example}
+$L = \{0^n1^n \mid n \geq 0\}$, $\Sigma = \{0,1\}$, $\Gamma = \{\bot, 0\}$.
+
+\begin{center}
+\begin{tikzpicture}[>=stealth, thick, node distance=3cm]
+    \node[state, initial] (s) {$s$};
+    \node[state, right of=s] (p) {$p$};
+    \node[state, right of=p] (d) {$d$};
+    \node[state, accepting, right of=d] (r) {$r$};
+
+    \draw (s) edge[above] node{$\varepsilon, \varepsilon / \bot$} (p)
+          (p) edge[loop above] node{$0, \varepsilon / 0$} (p)
+          (p) edge[above] node{$\varepsilon, \varepsilon / \varepsilon$} (d)
+          (d) edge[loop above] node{$1, 0 / \varepsilon$} (d)
+          (d) edge[above] node{$\varepsilon, \bot / \varepsilon$} (r);
+\end{tikzpicture}
+\end{center}
+\end{example}
+
+\section{NPDA and CFGs are Equivalent}
+
+Here is a proof (sketch) that the languages accepted by an NPDA are precisely CFLs, and all CFLs are accepted by an NPDA.
+
+\subsection*{CFG $\to$ NPDA Conversion}
+
+Let $G = (N, \Sigma, P, S)$ be a grammar for the CFL $L$ in Greibach Normal Form, i.e.\ every production rule is of the form
+\[
+A \to cB_1 \cdots B_k; \qquad A, B_i \in N,\ c \in \Sigma_\varepsilon,\ k \geq 0.
+\]
+
+Construct an NPDA $M$ with one state as follows:
+\[
+M = (\{q\}, \Sigma, N, \delta, q, S, \emptyset),
+\]
+with $\big((q,c,A), (q,B_1 \cdots B_k)\big) \in \delta$ whenever $A \to cB_1 \cdots B_k$ is a production rule, and $M$ accepts via emptying the stack.
+
+The following lemma helps us to prove that $L(M) = L(G)$.
+
+\begin{blackbox}
+\begin{lemma}
+Let $z, y \in \Sigma^*$, $\gamma \in N^*$, $A \in N$. Then
+\[
+A \xrightarrow[G]{n} z\gamma \text{ via left most derivation} \quad \text{iff} \quad (q, zy, A) \xrightarrow[M]{n} (q, y, \gamma).
+\]
+\end{lemma}
+\end{blackbox}
+
+\begin{blackbox}
+\begin{theorem}
+$L(M) = L(G)$.
+\end{theorem}
+\end{blackbox}
+
+\begin{proof}
+\begin{align*}
+x \in L(G) &\iff S \xrightarrow[G]{*} x \text{ via left most der.} \\
+&\iff (q, x, S) \xrightarrow[M]{*} (q, \varepsilon, \varepsilon) \\
+&\iff x \in L(M).
+\end{align*}
+\end{proof}
+
+\subsection*{NDPA $\to$ CFG}
+
+We shall first convert the NPDA to another equivalent NPDA with one state, and then convert it into a CFG.
+
+Say we can simulate our NPDA $M'$ with another NPDA $M = (\{q\}, \Sigma, \Gamma, \delta, q, \bot, \emptyset)$. Now construct the CFG $G = (\Gamma, \Sigma, P, \bot)$ as follows:
+\[
+A \to cB_1 \cdots B_k \text{ in a production rule whenever } \big((q,c,A),(q,B_1\cdots B_k)\big) \in \delta.
+\]
+
+The lemma proved before shows that $L(M) = L(G)$.
+
+\section{Closure Properties of CFLs}
+
+\subsection*{Union}
+
+$L_1$ -- via a CFG $G_1 = (V_1, \Sigma, P_1, S_1)$, $L_2$ -- via a CFG $G_2 = (V_2, \Sigma, P_2, S_2)$.
+
+We shall construct a CFG $G = (V, \Sigma, P, S)$ s.t.\ $L(G) = L_1 \cup L_2$:
+\[
+V = V_1 \cup V_2 \cup \{S\}, \qquad P = P_1 \cup P_2 \cup \{S \to S_1 \mid S_2\}.
+\]
+
+\subsection*{Concatenation}
+
+Just replace $S \to S_1 \mid S_2$ with $S \to S_1S_2$ in the previous grammar. $L(G) = L_1L_2$.
+
+\subsection*{Star}
+
+In $G_1$, add the production rule $S \to S_1S$. $L(G_1) = L^*$.
+
+\subsection*{Reversal}
+
+CFLs are closed under reversal. Whenever there is $A \to A_1 \cdots A_k$, replace it by $A \to A_k \cdots A_1$ to get $G'$.
+\[
+L(G') = \mathrm{rev}(L(G_1)).
+\]
+
+CFLs are also closed under homomorphisms and inverse homomorphisms.
+
+\subsection*{Intersection}
+
+Slightly different from the previous properties.
+
+\begin{blackbox}
+\begin{proposition}
+If $L_1$ is a CFL and $L_2$ is a regular language, then $L_1 \cap L_2$ is a CFL.
+\end{proposition}
+\end{blackbox}
+
+\begin{proof}
+Let $M_1 = (Q_1, \Sigma, \Gamma, \delta_1, q_1, \bot, F_1)$ be a PDA for $L_1$ and $M_2 = (Q_2, \Sigma, \delta_2, q_2, F_2)$ be an NFA for $L_2$. We look at the product PDA of $M_1, M_2$. Let $M = (Q, \Sigma, \Gamma, \delta, q, \bot, F)$ be defined as
+\[
+Q = Q_1 \times Q_2, \qquad q = (q_1, q_2), \qquad F = F_1 \times F_2.
+\]
+\end{proof}
